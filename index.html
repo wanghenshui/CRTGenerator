@@ -10,9 +10,19 @@
   <body>
     <div id="主体">
       <div id="标题">批判性键政辩经生成器</div>
-      <div id="主题">
+      <div id="主题" class="输入框类">
         <span>主题</span>
-        <input></input>
+        <input id="输入主题"></input>
+        <br>
+        <span>主题上一层（多个用/分隔）</span>
+        <input id="输入主题上一层"></input>
+        <br>
+        <span>主题弱势群体（多个用/分隔）</span>
+        <input id="输入主题弱势群体"></input>
+        <br>
+        <span>主题强势群体（多个用/分隔）</span>
+        <input id="输入主题强势群体"></input>
+
         <button onclick="生成文章()">生成</button>
       </div>
       <div id="文章"></div>
@@ -22,7 +32,7 @@
       <p><a class="链接" href="LICENSE_CN">声明</a></p>
     </div>
     <div id="页脚">
-       <p><a class="链接" href="https://github.com/wanghenshui/CRTGenerator/blob/master/index.html#L65">词库只有三个：性别 种族 阶级，点击更新词库</a></p>
+       <p><a class="链接" href="https://github.com/wanghenshui/CRTGenerator/blob/master/index.html#L65">点击更新默认词库</a></p>
        <p><a class="链接" href="https://www.zhihu.com/question/500708173/answer/2240046761">李建秋原文</a></p>
 
     </div>
@@ -59,6 +69,7 @@ let 初始主题 = [
     '性别',
     '种族',
     '阶级',
+    '鸳鸯锅',
 ]
 
 let 主题矩阵 = [
@@ -78,7 +89,18 @@ let 随机种子 = 获取网址参数('随机种子') || 下取整( 随便取一
 
 let 主题 = 获取网址参数('主题') || 随便取一句(初始主题)
 
-$('input').value = 主题;
+$('#输入主题').value = 主题;
+初始化主题对应关键词();
+
+function 初始化主题对应关键词() {
+  主题矩阵.forEach(element => {
+    if (element[0] == 主题) {
+      $('#输入主题上一层').value  = element[1].join("/");
+      $('#输入主题弱势群体').value = element[2].join("/");
+      $('#输入主题强势群体').value = element[3].join("/");
+    }
+  });
+}
 
 // LCG https://en.wikipedia.org/wiki/Linear_congruential_generator
 function 同余发生器() {
@@ -101,32 +123,20 @@ function 来点名人名言(){
 }
 
 function 生成文章(){
-    主题 = $('input').value
+    主题 = $('#输入主题').value
     history.pushState({url: window.location.href}, null ,'?主题=' + 主题 + '&随机种子=' + 随机种子);
     track('generator', 主题, 随机种子);
-    let 文章 = []
-    let 弱势 = ''
-    let 强势 = ''
-    let 主题上一层 = ''
-    let 主题定义了 = false
-    主题矩阵.forEach(element => {
-        if (element[0] == 主题) {
-          主题上一层 = 随便取一句(element[1])
-          弱势 = 随便取一句(element[2])
-          强势 = 随便取一句(element[3])
-          主题定义了 = true
-        }
-    });
-    if (!主题定义了) {
-      主题 = 随便取一句(初始主题)
-      主题矩阵.forEach(element => {
-        if (element[0] == 随便主题) {
-          主题上一层 = 随便取一句(element[1])
-          弱势 = 随便取一句(element[2])
-          强势 = 随便取一句(element[3])
-        }
-      });
-    }
+    let 文章 = [];
+    let 弱势 = '';
+    let 强势 = '';
+    let 主题上一层 = '';
+
+    let 输入主题上一层列表 = $('#输入主题上一层').value.split("/");
+    let 输入主题弱势群体列表 = $('#输入主题弱势群体').value.split("/");
+    let 输入主题强势群体列表 = $('#输入主题强势群体').value.split("/");
+    主题上一层 = 随便取一句(输入主题上一层列表);
+    弱势 = 随便取一句(输入主题弱势群体列表);
+    强势 = 随便取一句(输入主题强势群体列表);
 
     let 段落 = 
     `${主题}不是“${主题上一层}的基础”，也不是“自然的”，\
@@ -175,17 +185,17 @@ if (获取网址参数('主题')) {
       line-height: 3rem;
       text-align: center;
     }
-    #主题{
+    .输入框类{
       text-align: center;
       margin-top: 6px;
       font-size: 0px;
     }
-    #主题 span{
+    .输入框类 span{
       font-size: 2rem;
       vertical-align: baseline;
       margin-left: 6px;
     }
-    #主题 input{
+    .输入框类 input{
       border: none;
       border-bottom: #666666 2px solid;
       padding: 1px 0 0 0;
@@ -197,7 +207,7 @@ if (获取网址参数('主题')) {
       text-align: center;
       min-width: 20%;
     }
-    #主题 button{
+    .输入框类 button{
       border: 0;
       padding: 3px 7px 3px 7px;
       margin: 0;
@@ -260,17 +270,17 @@ if (获取网址参数('主题')) {
       line-height: 1.9rem;
       text-align: center;
     }
-    #主题{
+    .输入框类{
       text-align: center;
       margin-top: 20px;
       font-size: 0px;
     }
-    #主题 span{
+    .输入框类 span{
       font-size: 1rem;
       vertical-align: baseline;
       margin-left: 20px;
     }
-    #主题 input{
+    .输入框类 input{
       border: none;
       border-bottom: #666666 2px solid;
       padding: 1px 0 0 0;
@@ -282,7 +292,7 @@ if (获取网址参数('主题')) {
       text-align: center;
       min-width: 20%;
     }
-    #主题 button{
+    .输入框类 button{
       border: 0;
       padding: 5px 15px 5px 15px;
       margin: 0;
